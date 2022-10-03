@@ -6,6 +6,7 @@
 #include <queue>
 #include <unordered_map>
 #include <thread>
+#include "Comlib.h"
 
 using namespace std;
 unordered_map<string, MCallbackId> callbacks;
