@@ -174,7 +174,7 @@ void messageThread() {
 			fiveSecondMark = false;
 		}
 	}
-	cout << "thread 2 termination" << endl;
+	cout << "thread 2 terminated" << endl;
 }
 
 
