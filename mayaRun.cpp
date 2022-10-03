@@ -5,18 +5,23 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
+#include <thread>
 
 using namespace std;
 unordered_map<string, MCallbackId> callbacks;
 MObject m_node;
 MStatus status = MS::kSuccess;
 bool initBool = false;
+bool endThread = false;
+bool fiveSecondMark = false;
 
 enum NODE_TYPE { TRANSFORM, MESH };
 MTimer gTimer;
 // keep track of created meshes to maintain them
 queue<MObject> newMeshes;
 static double totaltime = 0.0;
+
+thread msgThread;
 
 
 void nodeAttributeChanged(MNodeMessage::AttributeMessage msg, MPlug& plug, MPlug& otherPlug, void* x)
@@ -68,7 +73,7 @@ void nodeNameChanged(MObject& node, const MString& str, void* clientData)
 {
 	if (node.hasFn(MFn::kDependencyNode)) {
 		MFnDependencyNode dn(node);
-		if (status == MS::kSuccess /*&& strcmp(str.asChar(), dn.name().asChar()) != 0*/) {
+		if (status == MS::kSuccess) {
 			cout << "Node " + str + " has been renamed to " + dn.name() << endl;
 		}
 	}
@@ -157,8 +162,21 @@ void nodeAdded(MObject& node, void* clientData) {
 
 void timerCallback(float elapsedTime, float lastTime, void* clientData) {
 	totaltime += elapsedTime;
-	cout << round(totaltime) << " seconds have elapsed\n";
+	fiveSecondMark = true;
+	//cout << round(totaltime) << " seconds have elapsed\n";
 }
+
+void messageThread() {
+	cout << "thread 2" << endl;
+	while (!endThread) {
+		if (fiveSecondMark) {
+			cout << "Thread 2 five seconds passed" << endl;
+			fiveSecondMark = false;
+		}
+	}
+	cout << "thread 2 termination" << endl;
+}
+
 
 /*
  * Plugin entry point
@@ -201,6 +219,7 @@ EXPORT MStatus initializePlugin(MObject obj) {
 		cout << "Error inserting timer callback\n";
 	}
 
+	msgThread = thread(messageThread);
 	// a handy timer, courtesy of Maya
 	gTimer.clear();
 	gTimer.beginTimer();
@@ -213,6 +232,8 @@ EXPORT MStatus uninitializePlugin(MObject obj) {
 	MFnPlugin plugin(obj);
 
 	cout << "Plugin unloaded =========================" << endl;
+	endThread = true;
+	msgThread.join();
 
 	cout << "Removing callbacks: \n";
 	for (auto i : callbacks) {
