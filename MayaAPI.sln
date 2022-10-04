@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.2.32602.215
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32901.82
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MayaAPI", "MayaAPI.vcxproj", "{FA7E0D31-8223-4A03-9F6F-A7255EA04830}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -11,6 +11,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CircularBuffer", "CircularBuffer\CircularBuffer.vcxproj", "{20A94D15-0952-4C3C-98FA-D1D192679D4D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "3DRenderer", "3DRenderer\3DRenderer.vcxproj", "{C177E8D0-3B5D-4B0D-BDB3-D283CB729FB1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{20A94D15-0952-4C3C-98FA-D1D192679D4D} = {20A94D15-0952-4C3C-98FA-D1D192679D4D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

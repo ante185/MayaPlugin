@@ -127,6 +127,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Comlib.cpp" />
+    <ClCompile Include="src\Memory.cpp" />
+    <ClCompile Include="src\Mutex.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Comlib.h" />
+    <ClInclude Include="src\CustomPrint.h" />
+    <ClInclude Include="src\Def.h" />
+    <ClInclude Include="src\Headers.h" />
+    <ClInclude Include="src\Memory.h" />
+    <ClInclude Include="src\Mutex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

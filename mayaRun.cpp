@@ -202,6 +202,15 @@ EXPORT MStatus initializePlugin(MObject obj) {
 	std::cout.set_rdbuf(MStreamUtils::stdOutStream().rdbuf());
 	std::cerr.set_rdbuf(MStreamUtils::stdErrorStream().rdbuf());
 	cout << "Plugin successfully loaded ==============" << endl;
+	cout << "Adding callbacks to existing nodes ======" << endl;
+
+	MItDependencyNodes dnitr;
+
+	while (!dnitr.isDone())
+	{
+		nodeAdded(dnitr.thisNode(), nullptr);
+		dnitr.next();
+	}
 
 	// register callbacks here for
 	auto nodeAddedId = MDGMessage::addNodeAddedCallback(nodeAdded, "dependNode", NULL, &status);
