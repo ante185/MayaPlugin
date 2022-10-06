@@ -171,7 +171,7 @@ void messageThread() {
 	cout << "thread 2" << endl;
 	while (!endThread) {
 		if (fiveSecondMark) {
-			cout << "Thread 2 five seconds passed" << endl;
+			cout << "Thread 2 five seconds passed\n";
 			fiveSecondMark = false;
 		}
 	}
