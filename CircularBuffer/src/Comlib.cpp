@@ -2,7 +2,7 @@
 
 Comlib::Comlib(LPCWSTR bufferName, size_t bufferSize, ProcessType type)
     :mp_mutex(nullptr), mp_sharedMemory(nullptr), mp_messageData(nullptr), mp_head(nullptr), mp_tail(nullptr), mp_freeMemory(nullptr),
-    mp_messageHeader(nullptr), mp_ctrler(nullptr), m_type(type) {
+    mp_ctrler(nullptr), m_type(type) {
 
     mp_sharedMemory = NEW Memory(bufferName, bufferSize);
     mp_messageData = mp_sharedMemory->GetMemoryBuffer();
@@ -33,30 +33,30 @@ Comlib::~Comlib() {
     delete mp_mutex;
 }
 
-bool Comlib::Send(char* message, MessageHeader* msgHeader) {
+bool Comlib::Send(char* message, SectionHeader* msgHeader) {
 
     mp_mutex->Lock();
 
     size_t memoryLeft = mp_sharedMemory->GetBufferSize() - *mp_head;
-    if(msgHeader->messageLength + sizeof(MessageHeader) >= memoryLeft) {
+    if(msgHeader->messageLength + sizeof(SectionHeader) >= memoryLeft) {
 
         if(*mp_tail != 0ull) {
             msgHeader->messageID = 0ull;
-            memcpy(mp_messageData + *mp_head, msgHeader, sizeof(MessageHeader));
+            memcpy(mp_messageData + *mp_head, msgHeader, sizeof(SectionHeader));
 
-            *mp_freeMemory -= (msgHeader->messageLength + sizeof(MessageHeader));
+            *mp_freeMemory -= (msgHeader->messageLength + sizeof(SectionHeader));
             *mp_head = 0ull;
 
         }
 
-    } else if(msgHeader->messageLength + sizeof(MessageHeader) < *mp_freeMemory - 1ull) {
+    } else if(msgHeader->messageLength + sizeof(SectionHeader) < *mp_freeMemory - 1ull) {
         msgHeader->messageID = 1ull;
 
-        memcpy(mp_messageData + *mp_head, msgHeader, sizeof(MessageHeader));
-        memcpy(mp_messageData + *mp_head + sizeof(MessageHeader), message, msgHeader->messageLength);
+        memcpy(mp_messageData + *mp_head, msgHeader, sizeof(SectionHeader));
+        memcpy(mp_messageData + *mp_head + sizeof(SectionHeader), message, msgHeader->messageLength);
 
-        *mp_freeMemory -= (msgHeader->messageLength + sizeof(MessageHeader));
-        *mp_head = (*mp_head + msgHeader->messageLength + sizeof(MessageHeader)) % mp_sharedMemory->GetBufferSize();
+        *mp_freeMemory -= (msgHeader->messageLength + sizeof(SectionHeader));
+        *mp_head = (*mp_head + msgHeader->messageLength + sizeof(SectionHeader)) % mp_sharedMemory->GetBufferSize();
 
         mp_mutex->Unlock();
         return true;
@@ -67,7 +67,7 @@ bool Comlib::Send(char* message, MessageHeader* msgHeader) {
     return false;
 }
 
-bool Comlib::Recieve(char* message) {
+bool Comlib::Recieve(char* message, SectionHeader*& mp_secHeader) {
 
     mp_mutex->Lock();
 
@@ -75,18 +75,18 @@ bool Comlib::Recieve(char* message) {
     if(*mp_freeMemory < mp_sharedMemory->GetBufferSize()) {
 
         if(*mp_head != *mp_tail) {
-            mp_messageHeader = (MessageHeader*)&mp_messageData[*mp_tail];
+            mp_secHeader = (SectionHeader*)&mp_messageData[*mp_tail];
 
-            msgLength = mp_messageHeader->messageLength;
-            if(mp_messageHeader->messageID == 0ull) {
-                *mp_freeMemory += (msgLength + sizeof(MessageHeader));
+            msgLength = mp_secHeader->messageLength;
+            if(mp_secHeader->messageID == 0ull) {
+                *mp_freeMemory += (msgLength + sizeof(SectionHeader));
                 *mp_tail = 0ull;
 
             } else {
-                memcpy(message, &mp_messageData[*mp_tail + sizeof(MessageHeader)], msgLength);
+                memcpy(message, &mp_messageData[*mp_tail + sizeof(SectionHeader)], msgLength);
 
-                *mp_freeMemory += (msgLength + sizeof(MessageHeader));
-                *mp_tail = (*mp_tail + msgLength + sizeof(MessageHeader)) % mp_sharedMemory->GetBufferSize();
+                *mp_freeMemory += (msgLength + sizeof(SectionHeader));
+                *mp_tail = (*mp_tail + msgLength + sizeof(SectionHeader)) % mp_sharedMemory->GetBufferSize();
 
                 mp_mutex->Unlock();
                 return true;

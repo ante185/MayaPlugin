@@ -15,8 +15,8 @@ class Comlib {
 	~Comlib();
 
 	Memory* GetSharedMemory() {return mp_sharedMemory;}
-	bool Send(char* message, MessageHeader* secHeader);
-	bool Recieve(char* message);
+	bool Send(char* message, SectionHeader* secHeader);
+	bool Recieve(char* message, SectionHeader*& mp_messageHeader);
 
 	private:
 	Mutex* mp_mutex;
@@ -27,7 +27,7 @@ class Comlib {
 	size_t* mp_tail;
 	size_t* mp_freeMemory;
 
-	MessageHeader* mp_messageHeader;
+
 	ControlHeader* mp_ctrler;
 	const ProcessType m_type;
 };
