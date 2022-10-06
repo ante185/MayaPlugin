@@ -66,6 +66,7 @@ void nodeTransformChanged(MNodeMessage::AttributeMessage msg, MPlug& plug, MPlug
 		tform.getPath(test1);
 		auto worldMtrx = (test1.inclusiveMatrix());
 		cout << "Global transform for " << tform.name() << ": " << worldMtrx << endl << endl;
+		//Search for children and get their transforms too
 	}
 }
 
