@@ -2,7 +2,7 @@
 #include"CustomPrint.h"
 
 enum class Headers {
-
+	MESSAGE,
 };
 
 struct SectionHeader {

@@ -6,7 +6,8 @@
 #include <queue>
 #include <unordered_map>
 #include <thread>
-#include "Comlib.h"
+#include <functional>
+#include "CircularBuffer/src/Comlib.h"
 
 using namespace std;
 unordered_map<string, MCallbackId> callbacks;
@@ -24,6 +25,7 @@ static double totaltime = 0.0;
 
 thread msgThread;
 
+Comlib* producerBuffer;
 
 void nodeAttributeChanged(MNodeMessage::AttributeMessage msg, MPlug& plug, MPlug& otherPlug, void* x)
 {
@@ -67,6 +69,30 @@ void nodeTransformChanged(MNodeMessage::AttributeMessage msg, MPlug& plug, MPlug
 		auto worldMtrx = (test1.inclusiveMatrix());
 		cout << "Global transform for " << tform.name() << ": " << worldMtrx << endl << endl;
 		//Search for children and get their transforms too
+		function<void(MObject& node, void* cReturn)> getChildTransforms = [&getChildTransforms](MObject& node, void* cReturn) 
+		{
+			MFnDagNode dagNode(node);
+			MDagPath path;
+			for (unsigned int i = 0; i < dagNode.childCount(&status); i++) {
+				if (status == MS::kSuccess) {
+					dagNode.child(i, &status);
+					if (status == MS::kSuccess) {
+						if (dagNode.child(i, &status).hasFn(MFn::kTransform)) {
+							MFnTransform tformChild(dagNode.child(i, &status));
+							tformChild.getPath(path);
+							auto worldMtrx = (path.inclusiveMatrix());
+							cout << "Global transform for child: " + tformChild.name() + ": " << worldMtrx << endl << endl;
+						}
+						if (MFnDagNode(dagNode.child(i)).childCount(&status) > 0) {
+							if (status == MS::kSuccess) {
+								getChildTransforms(dagNode.child(i, &status), cReturn);
+							}
+						}
+					}
+				}
+			}
+		};
+		getChildTransforms(plug.node(), nullptr);
 	}
 }
 
@@ -76,7 +102,7 @@ void nodeNameChanged(MObject& node, const MString& str, void* clientData)
 	if (node.hasFn(MFn::kDependencyNode)) {
 		MFnDependencyNode dn(node);
 		if (status == MS::kSuccess) {
-			cout << "Node " + str + " has been renamed to " + dn.name() << endl;
+			cout << "Node " + str + " has been renamed to " + dn.name() + '\n';
 		}
 	}
 }
@@ -105,7 +131,7 @@ void dirtyNode(MObject& node, void* clientData)
 void nodeAdded(MObject& node, void* clientData) {
 	if (node.hasFn(MFn::kDependencyNode)) {
 		MFnDependencyNode dn(node);
-		cout << "Node added: " << dn.name() << endl;
+		cout << "Node added: " << dn.name() + '\n';
 		MCallbackId cbID = MNodeMessage::addNameChangedCallback(node, nodeNameChanged, NULL, &status);
 		if (status == MS::kSuccess) {
 			string name = dn.name().asChar();
@@ -172,7 +198,7 @@ void messageThread() {
 	cout << "thread 2" << endl;
 	while (!endThread) {
 		if (fiveSecondMark) {
-			cout << "Thread 2 five seconds passed\n";
+			//cout << "Thread 2 five seconds passed\n";
 			fiveSecondMark = false;
 		}
 	}
@@ -213,6 +239,8 @@ EXPORT MStatus initializePlugin(MObject obj) {
 		dnitr.next();
 	}
 
+	producerBuffer = new Comlib(L"Filemap", 150, ProcessType::Producer);
+
 	// register callbacks here for
 	auto nodeAddedId = MDGMessage::addNodeAddedCallback(nodeAdded, "dependNode", NULL, &status);
 	if (status == MS::kSuccess) {
@@ -230,7 +258,7 @@ EXPORT MStatus initializePlugin(MObject obj) {
 		cout << "Error inserting timer callback\n";
 	}
 
-	msgThread = thread(messageThread);
+	//msgThread = thread(messageThread);
 	// a handy timer, courtesy of Maya
 	gTimer.clear();
 	gTimer.beginTimer();
@@ -244,7 +272,7 @@ EXPORT MStatus uninitializePlugin(MObject obj) {
 
 	cout << "Plugin unloaded =========================" << endl;
 	endThread = true;
-	msgThread.join();
+	//msgThread.join();
 
 	cout << "Removing callbacks: \n";
 	for (auto i : callbacks) {

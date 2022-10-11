@@ -18,7 +18,7 @@ Comlib::Comlib(LPCWSTR bufferName, size_t bufferSize, ProcessType type)
 
         *mp_head = 0ull;
         *mp_tail = 0ull;
-        *mp_freeMemory = bufferSize;
+        *mp_freeMemory = bufferSize * (1<<10);
 
     } else if(type == ProcessType::Consumer) {
         Print("Consumer Initialized.\n");

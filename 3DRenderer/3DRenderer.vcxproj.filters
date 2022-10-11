@@ -13,10 +13,48 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Comlib">
+      <UniqueIdentifier>{64481745-0678-4900-8548-c717a1c4f5bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Comlib\Header Files">
+      <UniqueIdentifier>{0e6fd7e1-f601-4a40-bb01-83670ca09312}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Comlib\Source Files">
+      <UniqueIdentifier>{e0051be8-cf58-4e06-9c04-40bce0a1646a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\CircularBuffer\src\Comlib.cpp">
+      <Filter>Comlib\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CircularBuffer\src\Memory.cpp">
+      <Filter>Comlib\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CircularBuffer\src\Mutex.cpp">
+      <Filter>Comlib\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\CircularBuffer\src\Comlib.h">
+      <Filter>Comlib\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CircularBuffer\src\CustomPrint.h">
+      <Filter>Comlib\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CircularBuffer\src\Def.h">
+      <Filter>Comlib\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CircularBuffer\src\Headers.h">
+      <Filter>Comlib\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CircularBuffer\src\Memory.h">
+      <Filter>Comlib\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CircularBuffer\src\Mutex.h">
+      <Filter>Comlib\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

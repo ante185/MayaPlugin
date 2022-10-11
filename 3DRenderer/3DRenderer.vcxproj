@@ -128,7 +128,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\CircularBuffer\src\Comlib.cpp" />
+    <ClCompile Include="..\CircularBuffer\src\Memory.cpp" />
+    <ClCompile Include="..\CircularBuffer\src\Mutex.cpp" />
     <ClCompile Include="src\Main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\CircularBuffer\src\Comlib.h" />
+    <ClInclude Include="..\CircularBuffer\src\CustomPrint.h" />
+    <ClInclude Include="..\CircularBuffer\src\Def.h" />
+    <ClInclude Include="..\CircularBuffer\src\Headers.h" />
+    <ClInclude Include="..\CircularBuffer\src\Memory.h" />
+    <ClInclude Include="..\CircularBuffer\src\Mutex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
